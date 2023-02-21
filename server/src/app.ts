@@ -29,5 +29,5 @@ httpServer.listen(port, host, () => {
     logger.info('🚀server is listening 🚀');
     logger.info(`http://${host}:${port}`);
 
-    socket({ io })
+    socket({ io });
 })

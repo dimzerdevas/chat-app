@@ -19,10 +19,11 @@ export default function Home() {
     setUsername(value);
     localStorage.setItem("username", value)
   }
+  console.log('here', usernameRef);
 
   return (
     <div>
-      {username
+      {!username
         ? (
           <div className={styles.usernameWrapper}>
             <input placeholder='username' ref={usernameRef} />
@@ -30,6 +31,9 @@ export default function Home() {
           </div>)
         : (
           <>
+            <p>
+              {username}
+            </p>
             <RoomsContainer />
             <MessagesContainer />
           </>)
