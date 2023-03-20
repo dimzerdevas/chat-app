@@ -1,7 +1,7 @@
 import '../styles/globals.css'
 import SocketsProvider from '../context/socket.context'
 
-function MyApp({ Component, pageProps }) {
+function App({ Component, pageProps }) {
   return (
     <SocketsProvider>
       <Component {...pageProps} />
@@ -9,4 +9,4 @@ function MyApp({ Component, pageProps }) {
   );
 }
 
-export default MyApp
+export default App;
