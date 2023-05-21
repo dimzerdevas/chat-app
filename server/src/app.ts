@@ -23,7 +23,15 @@ const io = new Server(httpServer, {
     }
 });
 
-app.get('/', (_, res) => res.send(`Server is up and running version ${version}`));
+app.get('/', (req, res) => {
+    const requestInfo = `Received a <b>${req.method}</b> request to ${req.url}<br>`;
+    const userAgent = `User-Agent: <b>${req.headers['user-agent']}</b><br>`;
+    const serverVersion = `Server version: <b>${version}</b><br>`;
+  
+    const responseString = `${requestInfo}${userAgent}${serverVersion}`;
+  
+    res.send(responseString);
+});
 
 httpServer.listen(port, host, () => {
     logger.info('🚀server is listening 🚀');
