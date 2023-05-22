@@ -1,4 +1,3 @@
-// import { nanoid } from 'nanoid';
 import { Server, Socket } from "socket.io";
 import logger from './utils/logger';
 
@@ -26,31 +25,35 @@ function socket({ io }: { io: Server }) {
     io.on(EVENTS.connection, (socket: Socket) => {
         logger.info(`User connected ${socket.id}`);
 
+        // Emit the current state of the rooms object to the client
         socket.emit(EVENTS.SERVER.ROOMS, rooms);
 
+        // Event: CLIENT.CREATE_ROOM
         socket.on(EVENTS.CLIENT.CREATE_ROOM, (roomName) => {
-            // create a roomId
+            // Create a unique roomId
             const roomId = nanoid();
 
-            // add a new room to the rooms object
+            // Add a new room to the rooms object
             rooms[roomId] = {
                 name: roomName
             };
             socket.join(roomId);
 
-            // broadcast an event saying there is a new room
+            // Broadcast an event to all clients (except the room creator) with the updated rooms object
             socket.broadcast.emit(EVENTS.SERVER.ROOMS, rooms);
 
-            // emit back to the room creator with all the rooms 
+            // Emit the updated rooms object back to the room creator
             socket.emit(EVENTS.SERVER.ROOMS, rooms);
 
-            // emit event back the room creator saying they have joined a room
+            // Emit an event back to the room creator indicating that they have joined the room
             socket.emit(EVENTS.SERVER.JOINED_ROOM, roomId);
         });
 
+        // Event: CLIENT.SEND_ROOM_MESSAGE
         socket.on(EVENTS.CLIENT.SEND_ROOM_MESSAGE, ({ roomId, message, username }) => {
             const date = new Date();
 
+            // Emit the message to all clients in the specified room
             socket.to(roomId).emit(EVENTS.SERVER.ROOM_MESSAGE, {
                 message,
                 username,
@@ -58,12 +61,15 @@ function socket({ io }: { io: Server }) {
             })
         });
 
+        // Event: CLIENT.JOIN_ROOM
         socket.on(EVENTS.CLIENT.JOIN_ROOM, (roomId) => {
+            // Join the specified room
             socket.join(roomId);
+
+            // Emit an event back to the client indicating that they have joined the room
             socket.emit(EVENTS.SERVER.JOINED_ROOM, roomId);
         });
     });
-
 };
 
 export default socket;
